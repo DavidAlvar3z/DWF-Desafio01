@@ -1,6 +1,7 @@
 package com.letrasvivas.bookapi.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 @Entity
 public class Book {
@@ -9,13 +10,16 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "The title is mandatory")
     private String title;
 
+    @NotBlank(message = "The author is mandatory")
     private String author;
 
+    @Min(value = 1500, message = "The year of publication must be later than 1500.")
+    @Max(value = 2025, message = "The year of publication cannot be greater than 2025")
     private int publicationYear;
 
-    // Constructors
     public Book() {}
 
     public Book(String title, String author, int publicationYear) {
@@ -24,7 +28,6 @@ public class Book {
         this.publicationYear = publicationYear;
     }
 
-    // Getters and setters
     public Long getId() { return id; }
 
     public void setId(Long id) { this.id = id; }
