@@ -22,49 +22,69 @@ public class BookController {
         this.bookService = bookService;
     }
 
+    /**
+     * Get all books with pagination.
+     */
     @GetMapping
-    public Page<Book> getAllBooks(Pageable pageable) {
-        return bookService.getAllBooks(pageable);
+    public ResponseEntity<Page<Book>> getAllBooks(Pageable pageable) {
+        return ResponseEntity.ok(bookService.getAllBooks(pageable));
     }
 
+    /**
+     * Create a single book with validation.
+     */
     @PostMapping
-    public Book createBook(@Valid @RequestBody Book book) {
-        return bookService.saveBook(book);
+    public ResponseEntity<Book> createBook(@Valid @RequestBody Book book) {
+        return ResponseEntity.ok(bookService.saveBook(book));
     }
 
+    /**
+     * Create multiple books at once.
+     */
     @PostMapping("/bulk")
-    public List<Book> createMultipleBooks(@Valid @RequestBody List<Book> books) {
-        return bookService.saveAllBooks(books);
+    public ResponseEntity<List<Book>> createMultipleBooks(@Valid @RequestBody List<Book> books) {
+        return ResponseEntity.ok(bookService.saveAllBooks(books));
     }
 
+    /**
+     * Search books by title (case-insensitive).
+     */
     @GetMapping("/search")
-    public List<Book> searchBooks(@RequestParam String title) {
-        return bookService.findBooksByTitle(title);
+    public ResponseEntity<List<Book>> searchBooks(@RequestParam String title) {
+        return ResponseEntity.ok(bookService.findBooksByTitle(title));
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteBook(@PathVariable Long id) {
-        bookService.deleteBookById(id);
-    }
-
+    /**
+     * Get a book by its ID.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Book> getBookById(@PathVariable Long id) {
         return ResponseEntity.ok(bookService.getBookById(id));
     }
 
+    /**
+     * Update an existing book.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Book> updateBook(
             @PathVariable Long id,
-            @Valid @RequestBody Book bookDetails) {
+            @Valid @RequestBody Book updatedBookData) {
 
         Book existingBook = bookService.getBookById(id);
-
-        existingBook.setTitle(bookDetails.getTitle());
-        existingBook.setAuthor(bookDetails.getAuthor());
-        existingBook.setPublicationYear(bookDetails.getPublicationYear());
+        existingBook.setTitle(updatedBookData.getTitle());
+        existingBook.setAuthor(updatedBookData.getAuthor());
+        existingBook.setPublicationYear(updatedBookData.getPublicationYear());
 
         Book updatedBook = bookService.saveBook(existingBook);
-
         return ResponseEntity.ok(updatedBook);
+    }
+
+    /**
+     * Delete a book by its ID.
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+        bookService.deleteBookById(id);
+        return ResponseEntity.noContent().build();
     }
 }
